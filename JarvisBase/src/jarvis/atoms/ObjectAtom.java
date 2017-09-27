@@ -23,6 +23,7 @@ public class ObjectAtom extends AbstractAtom {
 	 */
 	public static final int ATTRIBUTE_FIELD =0;
 	public static final int METHOD_FIELD =1;
+	public static final int PARENT_FIELD =2;
 	
 	/*
 	 * Référence à la classe de cet objet.
@@ -35,15 +36,13 @@ public class ObjectAtom extends AbstractAtom {
 
 	// Constructeur d'objet générique
 	// Utilisé comme raccourci par les fonctions tricheuses.
-	public ObjectAtom(ObjectAtom theClass, ArrayList<AbstractAtom> vals,JarvisInterpreter ji) {
-
+	public ObjectAtom(ObjectAtom theClass, ArrayList<AbstractAtom> vals, JarvisInterpreter ji) {
 		classReference = theClass;
-
 		values = new ArrayList<AbstractAtom>();
 		values.addAll(vals);
-		
 		this.ji=ji;
 	}
+	
 	
 	@Override
 	public AbstractAtom interpretNoPut(JarvisInterpreter ji) {	
@@ -76,31 +75,40 @@ public class ObjectAtom extends AbstractAtom {
 		
 		//Va chercher les attributs
 		ListAtom members = (ListAtom) classReference.values.get(ATTRIBUTE_FIELD);
-
+		
 		//Vérifie si c'est un attribut 
 		int pos = members.find(selector);
 		
 		
+		
 		if (pos == -1) {
-			// pas un attribut...
-			// Va chercher les méthodes
-			DictionnaryAtom methods = (DictionnaryAtom) classReference.values
-					.get(METHOD_FIELD);
-
-			// Cherche dans le dictionnaire
-			AbstractAtom res = methods.get(selector.makeKey());
-
-			if (res == null) {
+					
+				// pas un attribut...
+				// Va chercher les méthodes
+				DictionnaryAtom methods = (DictionnaryAtom) classReference.values
+						.get(METHOD_FIELD);
 				
-				// Rien ne correspond au message
-				return new StringAtom("ComprendPas "+ selector);
-			} else {
-				//C'est une méthode.
-				return res;
-			}
-
-		}
-
+				
+				// Cherche dans le dictionnaire
+				AbstractAtom res = methods.get(selector.makeKey());
+	
+				if (res == null) {
+					 //Rien ne correspond au message
+					try {
+						return sendParentMessage(this.classReference,selector);
+					}
+					catch (Exception e) {
+						return new StringAtom("ComprendPas "+ selector);
+					}
+					
+					//return sendParentMessage(classReference,selector);
+					//return new StringAtom("ComprendPas "+ selector);
+				} else {
+					//C'est une méthode.
+					return res;
+				}
+				}
+			
 		else {
 			//C'est un attribut.
 			return values.get(pos);
@@ -110,7 +118,44 @@ public class ObjectAtom extends AbstractAtom {
 	public void setClass(ObjectAtom theClass) {
 		classReference = theClass;
 	}
+	
+	public void setValue(AbstractAtom attribute,AbstractAtom newValue) {
+		
+		ListAtom members = this.classReference.getAttributeList();
+		
+		int pos = members.find(attribute);
+		
+		values.set(pos,newValue);
+	}
 
+	public AbstractAtom sendParentMessage(ObjectAtom theClass, AbstractAtom selector){
+		ObjectAtom parent = (ObjectAtom) theClass.message("parent");
+		DictionnaryAtom methods = (DictionnaryAtom) parent.values
+				.get(METHOD_FIELD);
+		AbstractAtom res = methods.get(selector.makeKey());
+
+		if (res == null){			
+			return sendParentMessage(parent,selector);
+		}
+		else {
+			return res;
+		}
+						
+	}
+	
+	/*public AbstractAtom getAllAttributes(){
+		ListAtom listAttribute = new ListAtom();
+		AbstractAtom parent = this.values.get(PARENT_FIELD);
+		if(!(parent instanceof NullAtom)) {
+			listAttribute.addAll(((ObjectAtom) parent).getAllAttributes());
+		}
+	
+	}*/
+	public ListAtom getAttributeList(){
+		
+			ListAtom members = (ListAtom) this.values.get(ATTRIBUTE_FIELD);
+			return members;	
+	}
 	
 	
 	//Surtout utile pour l'affichage dans ce cas-ci...

@@ -8,6 +8,7 @@ public abstract class PrimitiveOperationAtom extends AbstractAtom{
 	
 	protected int argCount;
 	protected abstract AbstractAtom execute(JarvisInterpreter ji,ObjectAtom self);
+
 	
 	//OPERATIONSPRIMITIVES
 	/*

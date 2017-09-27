@@ -43,6 +43,11 @@ public class ListAtom extends AbstractAtom{
 		return list;
 	}
 	
+	public ArrayList<AbstractAtom> getData()
+	{
+		return this.data;
+	}
+		
 	
 	@Override
 	public AbstractAtom interpretNoPut(JarvisInterpreter ji) {
@@ -102,6 +107,11 @@ public class ListAtom extends AbstractAtom{
 	public void add(AbstractAtom atom)
 	{
 		data.add(atom);
+	}
+	
+	public void addAll(ListAtom atom)
+	{
+		data.addAll(atom.getData());
 	}
 	
 	

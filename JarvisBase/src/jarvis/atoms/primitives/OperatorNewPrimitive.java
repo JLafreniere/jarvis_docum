@@ -2,6 +2,7 @@ package jarvis.atoms.primitives;
 
 import jarvis.atoms.AbstractAtom;
 import jarvis.atoms.ListAtom;
+import jarvis.atoms.NullAtom;
 import jarvis.atoms.ObjectAtom;
 import jarvis.interpreter.JarvisInterpreter;
 
@@ -35,19 +36,28 @@ public class OperatorNewPrimitive extends PrimitiveOperationAtom{
 		//Seule une classe peut faire new. Ramasser de la classe combien d'attributs ça prend.
 		
 		ListAtom attributes = (ListAtom)self.message("attributes");
+		int nbArgument = ji.getArgCount();
 		
 		ArrayList<AbstractAtom> data = new ArrayList<AbstractAtom>();
 		for(int i=0;i<attributes.size();i++)
-		{
+		{	
+			
 			if(ji.getArgCount()<=0)
 			{
 				throw new IllegalArgumentException("Operator new: Bad number of arguments. Expected "+attributes.size()+" got "+i);
-			}
+			}			
 			data.add(ji.getArg());
-		}		
-				
-		ObjectAtom res = new ObjectAtom(self, data,ji);		
+		}
+		/*if (nbArgument == 3 && (data.get(2) instanceof ObjectAtom )) {
+			ObjectAtom parent = (ObjectAtom)data.get(2);
+			ListAtom parentAttribute = parent.getAttributeList();
+			data.addAll(0,parentAttribute.getData());
+			System.out.println(data.get(0).makeKey());
+			System.out.println(parentAttribute.getData().toString());
+		}
+		System.out.println(data.toString());*/
 		
+		ObjectAtom res = new ObjectAtom(self, data, ji);
 		return res;		
 		
 	}

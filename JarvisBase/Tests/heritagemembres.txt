@@ -64,10 +64,6 @@
 #Définition de la classe Chat Domestique
 !{.
 
-	
-	
-	
-	
 	("nom")
 	
 	[]

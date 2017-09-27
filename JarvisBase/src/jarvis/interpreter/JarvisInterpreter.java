@@ -7,12 +7,19 @@ import jarvis.atoms.ListAtom;
 import jarvis.atoms.ObjectAtom;
 import jarvis.atoms.StringAtom;
 import jarvis.atoms.primitives.OperatorNewPrimitive;
+import jarvis.atoms.primitives.OperatorSetPrimitive;
+import jarvis.atoms.primitives.bools.BoolPrimitiveAnd;
+import jarvis.atoms.primitives.bools.BoolPrimitiveNot;
+import jarvis.atoms.primitives.bools.BoolPrimitiveOr;
 import jarvis.atoms.primitives.integers.IntegerPrimitiveAdd;
 import jarvis.atoms.primitives.integers.IntegerPrimitiveEquals;
+import jarvis.atoms.primitives.integers.IntegerPrimitiveGreater;
 import jarvis.atoms.primitives.integers.IntegerPrimitiveSubtract;
 import jarvis.atoms.primitives.integers.IntegerPrimitiveMultiply;
+import jarvis.atoms.primitives.integers.IntegerPrimitiveSmaller;
 import jarvis.exceptions.UndefinedSymbolException;
 
+import java.awt.List;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -110,12 +117,24 @@ public class JarvisInterpreter {
 	 * dans un environnement parent à celui dans lequel l'interpréteur démarre.
 	 */
 	private void addCheaterCode() {
-
+		
+		/*INTEGER*/
 		environment.put("_integerAddPrimitive", new IntegerPrimitiveAdd());
 		environment.put("_integerSubtractPrimitive", new IntegerPrimitiveSubtract());
 		environment.put("_integerMultiplyPrimitive", new IntegerPrimitiveMultiply());
 		environment.put("_integerEqualsPrimitive", new IntegerPrimitiveEquals());
+		environment.put("_integerGreaterPrimitive", new IntegerPrimitiveGreater());
+		environment.put("_integerSmallerPrimitive", new IntegerPrimitiveSmaller());
+		
+		/*Boolean*/
+		environment.put("_boolNotPrimitive", new BoolPrimitiveNot());
+		environment.put("_boolOrPrimitive", new BoolPrimitiveOr());
+		environment.put("_boolAndPrimitive", new BoolPrimitiveAnd());
 		environment.put("_operatorNewPrimitive", new OperatorNewPrimitive());
+		
+		/*Mutateur*/
+		environment.put("_operatorSetPrimitive", new OperatorSetPrimitive());
+		
 	}
 
 	// HÉRITAGE
@@ -156,9 +175,14 @@ public class JarvisInterpreter {
 		ListAtom members = new ListAtom();
 		members.add(new StringAtom("attributes"));
 		members.add(new StringAtom("methods"));
+		members.add(new StringAtom("parent"));
 
 		HashMap<String, AbstractAtom> m = new HashMap<String, AbstractAtom>();
 		DictionnaryAtom methods = new DictionnaryAtom(m);
+		
+	
+		
+	
 
 		/*
 		 * Cette classe ne contient qu'une méthode, new. Celle-ci fait usage de
@@ -168,6 +192,8 @@ public class JarvisInterpreter {
 		 * est instance d'elle-même.
 		 */
 		methods.put("new", new OperatorNewPrimitive());
+		
+
 
 		/*
 		 * Création d'un objet qui sera instance de Class Ses données seront la
@@ -176,7 +202,8 @@ public class JarvisInterpreter {
 		ArrayList<AbstractAtom> data = new ArrayList<AbstractAtom>();
 
 		data.add(members);
-		data.add(methods);
+		data.add(methods);	
+		
 
 		ObjectAtom ClassClass = new ObjectAtom(null, data, this);
 
@@ -719,7 +746,7 @@ public class JarvisInterpreter {
 	}
 
 	public void startUI() {
-		println("!!!----------User interface in development...V2.0------------!!!");
+		println("!!!----------User interface in development 2.0...------------!!!");
 
 	}
 }

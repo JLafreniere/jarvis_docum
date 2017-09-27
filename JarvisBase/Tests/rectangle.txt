@@ -16,6 +16,7 @@
 		!ref y1
 		!(self y2)
 		!(!a - y1)
+		verifyNegatif
 	}
 	!ref fonctionHauteur
 		
@@ -27,6 +28,7 @@
 		!ref x1
 		!(self x2)
 		!(!a - x1)
+		verifyNegatif
 	}
 	!ref fonctionLargeur	
 	
@@ -49,6 +51,8 @@
 	
 	#définition des méthodes
 	["hauteur" fonctionHauteur "largeur" fonctionLargeur "perimetre" fonctionPerimetre]
+	
+	Object
 	
 	#Définition de la classe
 	!(Class new)	
